@@ -1,15 +1,13 @@
-//! Rust bindings for the travis (v3) API
+//! Rust bindings for the [Travis (v3) API](https://developer.travis-ci.org/)
 //!
 //! # Examples
 //!
-//! Travis hosts a ci two environments, one for OSS projects and one
-//! for private projects (travis pro). The travis client exposes two iterfaces for this
-//! as a result, `Client::oss` and `Client::pro`
+//! Travis hosts a ci in two domains, one for OSS projects and one
+//! for private projects (travis pro). The travis client exposes two iterfaces
+//! for to accomidate these: `Client::oss` and `Client::pro`
 //!
-//! Travis requires a provided `hyper::Client` configured for https. One such provider
-//! is the `hyper_tls` crate.
-//!
-//! Depending on your usecase, you'll typically create one shared instance in your application
+//! Depending on your usecase, you'll typically create one shared instance
+//! in your application. If needed you may clone instances.
 //!
 //! ```no_run
 //! // travis interfaces
@@ -88,11 +86,17 @@ const PRO_HOST: &str = "https://api.travis-ci.com";
 #[derive(Clone, Debug)]
 pub enum Credential {
     /// A Travis API token
+    ///
+    /// Typically obtained from `travis token` ruby cli
     Token(String),
     /// A Github API token
     ///
     /// This will be immediately exchanged for a travis token
-    /// after constructing a `travis::Client` instance
+    /// after constructing a `travis::Client` instance.
+    /// Care should be taken to associate appropriate
+    /// [Github scopes](https://docs.travis-ci.com/user/github-oauth-scopes/)
+    /// with these tokens to perform target operations for on oss vs private
+    /// repositories
     Github(String),
 }
 
@@ -125,6 +129,8 @@ pub(crate) fn escape(raw: &str) -> String {
 }
 
 /// Entry point for all travis operations
+///
+/// Instances of Clients may be cloned.
 #[derive(Clone, Debug)]
 pub struct Client<C>
 where
