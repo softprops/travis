@@ -57,6 +57,7 @@ use hyper::{Client as HyperClient, Method, Request, Uri};
 use hyper::client::{Connect, HttpConnector};
 use hyper::header::{Accept, Authorization, ContentType, UserAgent};
 
+use std::fmt;
 use serde::de::DeserializeOwned;
 use serde::ser::Serialize;
 use tokio_core::reactor::Core;
@@ -81,6 +82,50 @@ header! {
 
 const OSS_HOST: &str = "https://api.travis-ci.org";
 const PRO_HOST: &str = "https://api.travis-ci.com";
+
+/// Enumeration of Travis Build/Job states
+#[derive(Debug, Deserialize, Clone)]
+#[serde(rename_all = "lowercase")]
+pub enum State {
+    /// Workload was created but not yet started
+    Created,
+    /// Workload was started but has not completed
+    Started,
+    /// Workload started but was canceled
+    Canceled,
+    /// Workload completed with a successful exit status
+    Passed,
+    /// Workload completed with a failure exit status
+    Failed,
+    /// Travis build errored
+    Errored,
+}
+
+impl fmt::Display for State {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", match *self {
+            State::Created => "created",
+            State::Started => "started",
+            State::Canceled => "canceled",
+            State::Passed => "passed",
+            State::Failed => "failed",
+            State::Errored => "errored",
+        })
+    }
+}
+
+#[derive(Debug, Deserialize, Clone)]
+struct Pagination {
+    count: usize,
+    first: Page,
+    next: Option<Page>,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+struct Page {
+    #[serde(rename = "@href")]
+    href: String,
+}
 
 /// Representation of types of API credentials used to authenticate the client
 #[derive(Clone, Debug)]
@@ -140,7 +185,6 @@ where
     credential: Option<Credential>,
     host: String,
 }
-
 
 #[cfg(feature = "tls")]
 impl Client<HttpsConnector<HttpConnector>> {
@@ -261,7 +305,7 @@ where
 
     /// get a list of repos for the a given owner (user or org)
     pub fn repos(&self) -> Repos<C> {
-        Repos { travis: self }
+        Repos { travis: self.clone() }
     }
 
     /// get a ref to an env for a given repo slug

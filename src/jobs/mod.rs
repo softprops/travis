@@ -1,6 +1,6 @@
 //! interfaces for interacting with travis jobs
 
-use super::{Client, Error, Future, Owner};
+use super::{Client, Error, Future, Owner, State};
 use futures::{Future as StdFuture, IntoFuture};
 use futures::future;
 use hyper::client::Connect;
@@ -15,7 +15,7 @@ pub struct Job {
     pub id: usize,
     // standard rep fields
     pub number: Option<String>,
-    pub state: Option<String>,
+    pub state: Option<State>,
     pub started_at: Option<String>,
     pub finished_at: Option<String>,
     //pub build:
