@@ -57,7 +57,8 @@ pub struct RepoPermissions {
 pub struct ListOptions {
     include: Vec<String>,
     limit: i32,
-    /// id, started_at, finished_at, append :desc to any attribute to reverse order.
+    /// id, started_at, finished_at,
+    /// append :desc to any attribute to reverse order.
     sort_by: String,
     starred: Option<bool>,
     private: Option<bool>,
@@ -178,7 +179,8 @@ where
                             )),
                             _ => {
                                 state.pagination.next.clone().map(|path| {
-                                    Box::new(clone
+                                    Box::new(
+                                        clone
                                             .travis
                                             .get::<Wrapper>(
                                                 format!(
@@ -201,7 +203,9 @@ where
                                                         .unwrap(),
                                                     next,
                                                 )
-                                            })) as Future<(Repository, Wrapper)>
+                                            }),
+                                    ) as
+                                        Future<(Repository, Wrapper)>
                                 })
                             }
                         },

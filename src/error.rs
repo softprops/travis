@@ -1,3 +1,5 @@
+//! Travis error types
+
 use hyper::Error as HttpError;
 use hyper::StatusCode;
 use hyper::error::UriError;

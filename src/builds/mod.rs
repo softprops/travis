@@ -41,7 +41,8 @@ pub struct Build {
 pub struct ListOptions {
     include: Vec<String>,
     limit: i32,
-    /// id, started_at, finished_at, append :desc to any attribute to reverse order.
+    /// id, started_at, finished_at,
+    /// append :desc to any attribute to reverse order.
     sort_by: String,
     created_by: Option<String>,
     event_type: Option<String>,
@@ -155,23 +156,29 @@ where
                             ),
                             _ => {
                                 state.pagination.next.clone().map(|path| {
-                                    Box::new(clone
-                                        .travis
-                                        .get::<Wrapper>(
-                                            format!(
-                                                "{host}{path}",
-                                                host = clone.travis.host,
-                                                path = path.href
-                                            ).parse()
-                                                .map_err(Error::from)
-                                                .into_future(),
-                                        )
-                                        .map(|mut next| {
-                                            let mut builds = next.builds;
-                                            builds.reverse();
-                                            next.builds = builds;
-                                            (next.builds.pop().unwrap(), next)
-                                        })) as Future<(Build, Wrapper)>
+                                    Box::new(
+                                        clone
+                                            .travis
+                                            .get::<Wrapper>(
+                                                format!(
+                                                    "{host}{path}",
+                                                    host = clone.travis.host,
+                                                    path = path.href
+                                                ).parse()
+                                                    .map_err(Error::from)
+                                                    .into_future(),
+                                            )
+                                            .map(|mut next| {
+                                                let mut builds = next.builds;
+                                                builds.reverse();
+                                                next.builds = builds;
+                                                (
+                                                    next.builds.pop().unwrap(),
+                                                    next,
+                                                )
+                                            }),
+                                    ) as
+                                        Future<(Build, Wrapper)>
                                 })
                             }
                         },

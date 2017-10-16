@@ -28,6 +28,12 @@
 //!   );
 //! }
 //! ```
+//!
+//! # Cargo features
+//!
+//! This crate has one Cargo feature, `tls`,
+//! which adds HTTPS support via the `Tokens::new`
+//! constructor. This feature is enabled by default.
 #[deny(missing_docs)]
 #[macro_use]
 extern crate derive_builder;
@@ -53,13 +59,13 @@ use futures::{Future as StdFuture, IntoFuture, Stream};
 use futures::future::FutureResult;
 use std::borrow::Cow;
 
-use hyper::{StatusCode, Client as HyperClient, Method, Request, Uri};
+use hyper::{Client as HyperClient, Method, Request, StatusCode, Uri};
 use hyper::client::{Connect, HttpConnector};
 use hyper::header::{Accept, Authorization, ContentType, UserAgent};
 
-use std::fmt;
 use serde::de::DeserializeOwned;
 use serde::ser::Serialize;
+use std::fmt;
 use tokio_core::reactor::Core;
 use url::percent_encoding::{PATH_SEGMENT_ENCODE_SET, utf8_percent_encode};
 
@@ -72,11 +78,12 @@ use jobs::Jobs;
 pub mod repos;
 use repos::Repos;
 
-mod error;
-pub use error::*;
+pub mod error;
+use error::*;
+pub use error::{Error, Result};
 
 header! {
-    /// The `Travis-Api-Version` header.
+    #[doc(hidden)]
     (TravisApiVersion, "Travis-Api-Version") => [String]
 }
 
@@ -103,14 +110,18 @@ pub enum State {
 
 impl fmt::Display for State {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", match *self {
-            State::Created => "created",
-            State::Started => "started",
-            State::Canceled => "canceled",
-            State::Passed => "passed",
-            State::Failed => "failed",
-            State::Errored => "errored",
-        })
+        write!(
+            f,
+            "{}",
+            match *self {
+                State::Created => "created",
+                State::Started => "started",
+                State::Canceled => "canceled",
+                State::Passed => "passed",
+                State::Failed => "failed",
+                State::Errored => "errored",
+            }
+        )
     }
 }
 
@@ -155,11 +166,13 @@ struct AccessToken {
     pub access_token: String,
 }
 
+/// A git branch ref
 #[derive(Debug, Deserialize, Clone)]
 pub struct Branch {
     pub name: String,
 }
 
+/// A Github owner
 #[derive(Debug, Deserialize, Clone)]
 pub struct Owner {
     pub id: usize,
@@ -264,20 +277,27 @@ where
                     let status = response.status();
                     let body = response.body().concat2().map_err(Error::from);
                     body.and_then(move |body| if status.is_success() {
-                        //println!("body {}", ::std::str::from_utf8(&body).unwrap());
+                        //println!(
+                        //"body {}", ::std::str::from_utf8(&body).unwrap());
                         serde_json::from_slice::<AccessToken>(&body).map_err(
                             |error| {
                                 ErrorKind::Codec(error).into()
                             },
                         )
                     } else {
-                       if StatusCode::Forbidden == status {
-                           return Err(ErrorKind::Fault {
+                        if StatusCode::Forbidden == status {
+                            return Err(
+                                ErrorKind::Fault {
                                     code: status,
-                                    error: String::from_utf8_lossy(&body).into_owned().clone(),
-                                }.into())
-                       }
-                        //println!("{} err {}", status, ::std::str::from_utf8(&body).unwrap());
+                                    error: String::from_utf8_lossy(&body)
+                                        .into_owned()
+                                        .clone(),
+                                }.into(),
+                            );
+                        }
+                        //println!(
+                        //"{} err {}",
+                        //status, ::std::str::from_utf8(&body).unwrap());
                         match serde_json::from_slice::<ClientError>(&body) {
                             Ok(error) => Err(
                                 ErrorKind::Fault {
@@ -429,9 +449,12 @@ where
             let body = response.body().concat2().map_err(Error::from);
             body.and_then(move |body| if status.is_success() {
                 //println!("body {}", ::std::str::from_utf8(&body).unwrap());
-                serde_json::from_slice::<T>(&body).map_err(|error| ErrorKind::Codec(error).into())
+                serde_json::from_slice::<T>(&body).map_err(|error| {
+                    ErrorKind::Codec(error).into()
+                })
             } else {
-                //println!("{} err {}", status, ::std::str::from_utf8(&body).unwrap());
+                //println!(
+                //"{} err {}", status, ::std::str::from_utf8(&body).unwrap());
                 match serde_json::from_slice::<ClientError>(&body) {
                     Ok(error) => Err(
                         ErrorKind::Fault {

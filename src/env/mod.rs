@@ -77,7 +77,9 @@ where
                         .map_err(Error::from)
                         .into_future(),
                 )
-                .and_then(|wrapper: EnvVarsWrapper| future::ok(wrapper.env_vars)),
+                .and_then(
+                    |wrapper: EnvVarsWrapper| future::ok(wrapper.env_vars),
+                ),
         )
     }
 
@@ -99,7 +101,11 @@ where
     }
 
     /// updates the contents of an env var
-    pub fn update<'v, V>(&self, var_id: V, options: EnvVarPatch) -> Future<EnvVar>
+    pub fn update<'v, V>(
+        &self,
+        var_id: V,
+        options: EnvVarPatch,
+    ) -> Future<EnvVar>
     where
         V: Into<Cow<'v, str>>,
     {
