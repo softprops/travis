@@ -6,7 +6,7 @@ use futures::{Future as StdFuture, Stream, future};
 use futures::stream::futures_unordered;
 use std::env;
 use tokio_core::reactor::Core;
-use travis::{Client, Credential, Error, Future, Result, State};
+use travis::{Client, Credential, Future, Result, State};
 //use travis::builds::ListOptions;
 
 use travis::builds;
@@ -60,7 +60,7 @@ fn run() -> Result<()> {
                 running.and_then(
                     move |r| queued.map(move |q| (slug, r, q))
                 ),
-            ]).map_err(Error::from)
+            ])
         })
         .flatten()
         .for_each(|(slug, running, queued)| {
