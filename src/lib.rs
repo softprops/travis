@@ -53,7 +53,7 @@ use futures::{Future as StdFuture, IntoFuture, Stream};
 use futures::future::FutureResult;
 use std::borrow::Cow;
 
-use hyper::{Client as HyperClient, Method, Request, Uri};
+use hyper::{StatusCode, Client as HyperClient, Method, Request, Uri};
 use hyper::client::{Connect, HttpConnector};
 use hyper::header::{Accept, Authorization, ContentType, UserAgent};
 
@@ -271,6 +271,12 @@ where
                             },
                         )
                     } else {
+                       if StatusCode::Forbidden == status {
+                           return Err(ErrorKind::Fault {
+                                    code: status,
+                                    error: String::from_utf8_lossy(&body).into_owned().clone(),
+                                }.into())
+                       }
                         //println!("{} err {}", status, ::std::str::from_utf8(&body).unwrap());
                         match serde_json::from_slice::<ClientError>(&body) {
                             Ok(error) => Err(
