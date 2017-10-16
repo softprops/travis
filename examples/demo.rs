@@ -2,10 +2,11 @@ extern crate futures;
 extern crate tokio_core;
 extern crate travis;
 
-use futures::Stream;
+use futures::{Future as StdFuture, Stream, future};
+use futures::stream::futures_unordered;
 use std::env;
 use tokio_core::reactor::Core;
-use travis::{Client, Credential, Result, State};
+use travis::{Client, Credential, Error, Future, Result, State};
 //use travis::builds::ListOptions;
 
 use travis::builds;
@@ -33,16 +34,38 @@ fn run() -> Result<()> {
                 .build()?,
         )
         .map(|repo| {
-            println!("{:#?}", repo.slug);
-            travis.builds(repo.slug).iter(
-                &builds::ListOptions::builder()
+            let slug = repo.slug;
+            let running = travis
+                .builds(slug.clone())
+                .iter(&builds::ListOptions::builder()
                     .state(State::Started)
                     .build()
-                    .unwrap(),
-            )
+                    .unwrap())
+                .fold(
+                    0,
+                    |acc, _| Box::new(future::ok(acc + 1)) as Future<usize>,
+                );
+
+            let queued = travis
+                .builds(slug.clone())
+                .iter(&builds::ListOptions::builder()
+                    .state(State::Created)
+                    .build()
+                    .unwrap())
+                .fold(
+                    0,
+                    |acc, _| Box::new(future::ok(acc + 1)) as Future<usize>,
+                );
+            futures_unordered(vec![
+                running.and_then(
+                    move |r| queued.map(move |q| (slug, r, q))
+                ),
+            ]).map_err(Error::from)
         })
         .flatten()
-        .for_each(|build| Ok(println!("{:#?}", build)));
+        .for_each(|(slug, running, queued)| {
+            Ok(println!("{} ({}, {})", slug, running, queued))
+        });
 
 
     // all of the builds
