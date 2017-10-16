@@ -22,6 +22,9 @@ url = "1.5.1"
 error-chain = "0.10"
 derive_builder = "0.5"
 
+[badges]
+travis-ci = { repository = "softprops/travis" }
+
 [dependencies.hyper-tls]
 optional = true
 version = "0.1.2"
