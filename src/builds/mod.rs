@@ -20,7 +20,7 @@ pub struct Build {
     pub id: usize,
     pub number: String,
     pub state: State,
-    pub duration: usize,
+    pub duration: Option<usize>,
     pub event_type: String,
     pub previous_state: Option<State>,
     pub pull_request_title: Option<String>,
