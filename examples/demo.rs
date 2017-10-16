@@ -41,9 +41,9 @@ fn run() -> Result<()> {
                     .state(State::Started)
                     .build()
                     .unwrap())
-                .fold(
+                .fold::<_, _, Future<i64>>(
                     0,
-                    |acc, _| Box::new(future::ok(acc + 1)) as Future<usize>,
+                    |acc, _| Box::new(future::ok(acc + 1)),
                 );
 
             let queued = travis
@@ -52,9 +52,9 @@ fn run() -> Result<()> {
                     .state(State::Created)
                     .build()
                     .unwrap())
-                .fold(
+                .fold::<_, _, Future<i64>>(
                     0,
-                    |acc, _| Box::new(future::ok(acc + 1)) as Future<usize>,
+                    |acc, _| Box::new(future::ok(acc + 1)),
                 );
             futures_unordered(vec![
                 running.and_then(
@@ -66,16 +66,6 @@ fn run() -> Result<()> {
         .for_each(|(slug, running, queued)| {
             Ok(println!("{} ({}, {})", slug, running, queued))
         });
-
-
-    // all of the builds
-    /*let work = travis
-        .builds("softprops/codeowners")
-        .iter(&ListOptions::builder()
-            .limit(1)
-            .include(vec!["jobs".into()])
-            .build()?)
-        .for_each(|build| Ok(println!("{:#?}", build)));*/
 
     // Start the event loop, driving the asynchronous code to completion.
     Ok(println!("{:#?}", core.run(work)))
