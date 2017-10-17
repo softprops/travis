@@ -1,10 +1,7 @@
 //! Interfaces for interacting with travis repositories
 
-use {Branch, Client, Error, Future, Owner, Pagination};
-use futures::{Future as StdFuture, IntoFuture};
-use futures::Stream;
-use futures::future;
-use futures::stream;
+use {Branch, Client, Error, Stream, Future, Owner, Pagination};
+use futures::{future, stream, Future as StdFuture, IntoFuture, Stream as StdStream};
 use hyper::client::Connect;
 use std::borrow::Cow;
 
@@ -145,7 +142,7 @@ where
         &self,
         owner: O,
         options: &ListOptions,
-    ) -> Box<stream::Stream<Item = Repository, Error = super::Error>>
+    ) -> Stream<Repository>
     where
         O: Into<String>,
     {

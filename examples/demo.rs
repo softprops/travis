@@ -1,16 +1,38 @@
 extern crate futures;
 extern crate tokio_core;
 extern crate travis;
+extern crate hyper;
 
-use futures::{Future as StdFuture, Stream, future};
+use futures::{Future as StdFuture, Stream as StdStream, future};
 use futures::stream::futures_unordered;
+use hyper::client::Connect;
 use std::env;
 use tokio_core::reactor::Core;
-use travis::{Client, Credential, Future, Result, State};
-//use travis::builds::ListOptions;
+use travis::{Client, Credential, Future, Result, State, builds, repos};
 
-use travis::builds;
-use travis::repos;
+fn jobs<C>(state: State, builds: builds::Builds<C>) -> Future<usize>
+where
+    C: Clone + Connect,
+{
+    Box::new(
+        builds
+            .iter(&builds::ListOptions::builder()
+                .state(state.clone())
+                .include(vec!["build.jobs".into()])
+                .build()
+                .unwrap())
+            .fold::<_, _, Future<usize>>(0, move |acc, build| {
+                Box::new(future::ok(
+                    acc +
+                        build
+                            .jobs
+                            .iter()
+                            .filter(|job| Some(state.clone()) == job.state)
+                            .count(),
+                ))
+            }),
+    )
+}
 
 fn run() -> Result<()> {
     let mut core = Core::new()?;
@@ -34,37 +56,18 @@ fn run() -> Result<()> {
                 .build()?,
         )
         .map(|repo| {
-            let slug = repo.slug;
-            let running = travis
-                .builds(slug.clone())
-                .iter(&builds::ListOptions::builder()
-                    .state(State::Started)
-                    .build()
-                    .unwrap())
-                .fold::<_, _, Future<i64>>(
-                    0,
-                    |acc, _| Box::new(future::ok(acc + 1)),
-                );
-
-            let queued = travis
-                .builds(slug.clone())
-                .iter(&builds::ListOptions::builder()
-                    .state(State::Created)
-                    .build()
-                    .unwrap())
-                .fold::<_, _, Future<i64>>(
-                    0,
-                    |acc, _| Box::new(future::ok(acc + 1)),
-                );
+            let builds = travis.builds(repo.slug.as_ref());
+            let started = jobs(State::Started, builds.clone());
+            let created = jobs(State::Created, builds);
             futures_unordered(vec![
-                running.and_then(
-                    move |r| queued.map(move |q| (slug, r, q))
+                started.and_then(
+                    move |s| created.map(move |c| (repo.slug, s, c))
                 ),
             ])
         })
         .flatten()
-        .for_each(|(slug, running, queued)| {
-            Ok(println!("{} ({}, {})", slug, running, queued))
+        .for_each(|(slug, started, created)| {
+            Ok(println!("{} ({}, {})", slug, started, created))
         });
 
     // Start the event loop, driving the asynchronous code to completion.

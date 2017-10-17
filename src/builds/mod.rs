@@ -1,9 +1,9 @@
 //! interfaces for interacting with travis builds
 
-use {Branch, Client, Error, Future, Owner, Pagination, State};
-use futures::{Future as StdFuture, IntoFuture, Stream};
-use futures::future;
-use futures::stream;
+use {Branch, Client, Error, Stream, Future, Owner, Pagination, State};
+use futures::{
+    future, stream, Future as StdFuture, IntoFuture, Stream as StdStream
+    };
 use hyper::client::Connect;
 use jobs::Job;
 use url::form_urlencoded::Serializer;
@@ -25,7 +25,7 @@ pub struct Build {
     pub previous_state: Option<State>,
     pub pull_request_title: Option<String>,
     pub pull_request_number: Option<usize>,
-    pub started_at: String,
+    pub started_at: Option<String>,
     pub finished_at: Option<String>,
     // repository
     pub branch: Branch,
@@ -124,7 +124,7 @@ where
     pub fn iter(
         &self,
         options: &ListOptions,
-    ) -> Box<stream::Stream<Item = Build, Error = super::Error>> {
+    ) -> Stream<Build> {
         let first = self.travis
             .get::<Wrapper>(
                 format!(

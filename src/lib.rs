@@ -2,12 +2,12 @@
 //!
 //! # Examples
 //!
-//! Travis hosts a ci in two domains, one for OSS projects and one
+//! Travis hosts a CI enironments for OSS projects and
 //! for private projects (travis pro). The travis client exposes two iterfaces
 //! for to accomidate these: `Client::oss` and `Client::pro`
 //!
 //! Depending on your usecase, you'll typically create one shared instance
-//! in your application. If needed you may clone instances.
+//! of a Client within your application. If needed you may clone instances.
 //!
 //! ```no_run
 //! // travis interfaces
@@ -32,8 +32,8 @@
 //! # Cargo features
 //!
 //! This crate has one Cargo feature, `tls`,
-//! which adds HTTPS support via the `Tokens::new`
-//! constructor. This feature is enabled by default.
+//! which adds HTTPS support via the `Client::{oss,pro}`
+//! constructors. This feature is enabled by default.
 #[deny(missing_docs)]
 #[macro_use]
 extern crate derive_builder;
@@ -54,7 +54,7 @@ extern crate hyper_tls;
 #[cfg(feature = "tls")]
 use hyper_tls::HttpsConnector;
 
-use futures::{Future as StdFuture, IntoFuture, Stream};
+use futures::{Future as StdFuture, IntoFuture, Stream as StdStream, stream};
 use futures::future::FutureResult;
 use std::borrow::Cow;
 
@@ -90,7 +90,7 @@ const OSS_HOST: &str = "https://api.travis-ci.org";
 const PRO_HOST: &str = "https://api.travis-ci.com";
 
 /// Enumeration of Travis Build/Job states
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, PartialEq)]
 #[serde(rename_all = "lowercase")]
 pub enum State {
     /// Workload was created but not yet started
@@ -178,8 +178,11 @@ pub struct Owner {
     pub login: String,
 }
 
-/// A type alias for futures that may return travis::Error's
+/// A type alias for `Futures` that may return `travis::Errors`
 pub type Future<T> = Box<StdFuture<Item = T, Error = Error>>;
+
+/// A type alias for `Streams` that may result in `travis::Errors`
+pub type Stream<T> = Box<stream::Stream<Item = T, Error = Error>>;
 
 pub(crate) fn escape(raw: &str) -> String {
     utf8_percent_encode(raw, PATH_SEGMENT_ENCODE_SET).to_string()
@@ -276,8 +279,10 @@ where
                     let status = response.status();
                     let body = response.body().concat2().map_err(Error::from);
                     body.and_then(move |body| if status.is_success() {
-                        //println!(
-                        //"body {}", ::std::str::from_utf8(&body).unwrap());
+                        /*println!(
+                            "body {}",
+                            ::std::str::from_utf8(&body).unwrap()
+                        );*/
                         serde_json::from_slice::<AccessToken>(&body).map_err(
                             |error| {
                                 ErrorKind::Codec(error).into()
@@ -294,9 +299,11 @@ where
                                 }.into(),
                             );
                         }
-                        //println!(
-                        //"{} err {}",
-                        //status, ::std::str::from_utf8(&body).unwrap());
+                        /*println!(
+                            "{} err {}",
+                            status,
+                            ::std::str::from_utf8(&body).unwrap()
+                        );*/
                         match serde_json::from_slice::<ClientError>(&body) {
                             Ok(error) => Err(
                                 ErrorKind::Fault {
@@ -452,8 +459,11 @@ where
                     ErrorKind::Codec(error).into()
                 })
             } else {
-                //println!(
-                //"{} err {}", status, ::std::str::from_utf8(&body).unwrap());
+                /*println!(
+                    "{} err {}",
+                    status,
+                    ::std::str::from_utf8(&body).unwrap()
+                );*/
                 match serde_json::from_slice::<ClientError>(&body) {
                     Ok(error) => Err(
                         ErrorKind::Fault {
