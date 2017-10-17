@@ -40,6 +40,8 @@ extern crate derive_builder;
 extern crate futures;
 #[macro_use]
 extern crate hyper;
+#[macro_use]
+extern crate log;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
@@ -279,10 +281,10 @@ where
                     let status = response.status();
                     let body = response.body().concat2().map_err(Error::from);
                     body.and_then(move |body| if status.is_success() {
-                        /*println!(
+                        debug!(
                             "body {}",
                             ::std::str::from_utf8(&body).unwrap()
-                        );*/
+                        );
                         serde_json::from_slice::<AccessToken>(&body).map_err(
                             |error| {
                                 ErrorKind::Codec(error).into()
@@ -299,11 +301,11 @@ where
                                 }.into(),
                             );
                         }
-                        /*println!(
+                        debug!(
                             "{} err {}",
                             status,
                             ::std::str::from_utf8(&body).unwrap()
-                        );*/
+                        );
                         match serde_json::from_slice::<ClientError>(&body) {
                             Ok(error) => Err(
                                 ErrorKind::Fault {
@@ -454,16 +456,16 @@ where
             let status = response.status();
             let body = response.body().concat2().map_err(Error::from);
             body.and_then(move |body| if status.is_success() {
-                //println!("body {}", ::std::str::from_utf8(&body).unwrap());
+                debug!("body {}", ::std::str::from_utf8(&body).unwrap());
                 serde_json::from_slice::<T>(&body).map_err(|error| {
                     ErrorKind::Codec(error).into()
                 })
             } else {
-                /*println!(
+                debug!(
                     "{} err {}",
                     status,
                     ::std::str::from_utf8(&body).unwrap()
-                );*/
+                );
                 match serde_json::from_slice::<ClientError>(&body) {
                     Ok(error) => Err(
                         ErrorKind::Fault {
