@@ -3,10 +3,11 @@ extern crate tokio_core;
 extern crate travis;
 extern crate hyper;
 
+use std::env;
+
 use futures::{Future as StdFuture, Stream as StdStream, future};
 use futures::stream::futures_unordered;
 use hyper::client::Connect;
-use std::env;
 use tokio_core::reactor::Core;
 use travis::{Client, Credential, Future, Result, State, builds, repos};
 
@@ -45,7 +46,7 @@ fn run() -> Result<()> {
         &mut core,
     )?;
 
-    // all pending jobs
+    // all running and pending jobs
     let work = travis
         .repos()
         .iter(
@@ -66,9 +67,15 @@ fn run() -> Result<()> {
             ])
         })
         .flatten()
-        .for_each(|(slug, started, created)| {
-            Ok(println!("{} ({}, {})", slug, started, created))
-        });
+        .fold::<_, _, Future<(usize, usize)>>(
+            (0, 0),
+            |(all_started, all_created), (slug, started, created)| {
+                println!("{} ({}, {})", slug, started, created);
+                Box::new(
+                    future::ok((all_started + started, all_created + created)),
+                )
+            },
+        );
 
     // Start the event loop, driving the asynchronous code to completion.
     Ok(println!("{:#?}", core.run(work)))
