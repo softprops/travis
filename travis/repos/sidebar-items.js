@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["ListOptions","Repository list options"],["ListOptionsBuilder","Builder for `ListOptions`."],["RepoPermissions","Permissions associated with this repository available to the authenticated user"],["Repos",""],["Repository","A travis repository"]]});

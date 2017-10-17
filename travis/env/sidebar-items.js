@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Env","Interface for travis repositorty env vars"],["EnvVar",""],["EnvVarCreate",""],["EnvVarPatch",""],["EnvVarPermissions",""]]});

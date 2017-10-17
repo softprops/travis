@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Client` struct in crate `travis`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Client">
+
+    <title>travis::Client - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc struct">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'>Struct Client</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>travis</a></p><script>window.sidebarCurrent = {name: 'Client', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>travis</a>::<wbr><a class="struct" href=''>Client</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/travis/lib.rs.html#200-207' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct Client&lt;C&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;C: <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> + <a class="trait" href="https://docs.rs/hyper/0.11.6/hyper/client/connect/trait.Connect.html" title="trait hyper::client::connect::Connect">Connect</a>,&nbsp;</span> { /* fields omitted */ }</pre><div class='docblock'><p>Entry point for all travis operations</p>
+
+<p>Instances of Clients may be cloned.</p>
+</div>
+                    <h2 id='methods' class='small-section-header'>
+                      Methods<a href='#methods' class='anchor'></a>
+                    </h2>
+                <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="struct" href="../travis/struct.Client.html" title="struct travis::Client">Client</a>&lt;HttpsConnector&lt;<a class="struct" href="https://docs.rs/hyper/0.11.6/hyper/client/connect/struct.HttpConnector.html" title="struct hyper::client::connect::HttpConnector">HttpConnector</a>&gt;&gt;</code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/travis/lib.rs.html#210-236' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.oss' class="method"><span id='oss.v' class='invisible'><code>fn <a href='#method.oss' class='fnname'>oss</a>(credential: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="enum" href="../travis/enum.Credential.html" title="enum travis::Credential">Credential</a>&gt;, core: &amp;mut <a class="struct" href="https://docs.rs/tokio-core/0.1/tokio_core/reactor/struct.Core.html" title="struct tokio_core::reactor::Core">Core</a>) -&gt; <a class="type" href="../travis/error/type.Result.html" title="type travis::error::Result">Result</a>&lt;Self&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/travis/lib.rs.html#212-222' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Creates an Travis client for open source github repository builds</p>
+</div><h4 id='method.pro' class="method"><span id='pro.v' class='invisible'><code>fn <a href='#method.pro' class='fnname'>pro</a>(credential: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="enum" href="../travis/enum.Credential.html" title="enum travis::Credential">Credential</a>&gt;, core: &amp;mut <a class="struct" href="https://docs.rs/tokio-core/0.1/tokio_core/reactor/struct.Core.html" title="struct tokio_core::reactor::Core">Core</a>) -&gt; <a class="type" href="../travis/error/type.Result.html" title="type travis::error::Result">Result</a>&lt;Self&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/travis/lib.rs.html#225-235' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Creates a Travis client for private github repository builds</p>
+</div></div><h3 id='impl-1' class='impl'><span class='in-band'><code>impl&lt;C&gt; <a class="struct" href="../travis/struct.Client.html" title="struct travis::Client">Client</a>&lt;C&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;C: <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> + <a class="trait" href="https://docs.rs/hyper/0.11.6/hyper/client/connect/trait.Connect.html" title="trait hyper::client::connect::Connect">Connect</a>,&nbsp;</span></code><a href='#impl-1' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/travis/lib.rs.html#238-486' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.custom' class="method"><span id='custom.v' class='invisible'><code>fn <a href='#method.custom' class='fnname'>custom</a>&lt;H&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;host: H, <br>&nbsp;&nbsp;&nbsp;&nbsp;http: <a class="struct" href="https://docs.rs/hyper/0.11.6/hyper/client/struct.Client.html" title="struct hyper::client::Client">HyperClient</a>&lt;C&gt;, <br>&nbsp;&nbsp;&nbsp;&nbsp;credential: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="enum" href="../travis/enum.Credential.html" title="enum travis::Credential">Credential</a>&gt;, <br>&nbsp;&nbsp;&nbsp;&nbsp;core: &amp;mut <a class="struct" href="https://docs.rs/tokio-core/0.1/tokio_core/reactor/struct.Core.html" title="struct tokio_core::reactor::Core">Core</a><br>) -&gt; <a class="type" href="../travis/error/type.Result.html" title="type travis::error::Result">Result</a>&lt;Self&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;H: <a class="trait" href="https://doc.rust-lang.org/nightly/core/convert/trait.Into.html" title="trait core::convert::Into">Into</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;,&nbsp;</span></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/travis/lib.rs.html#243-341' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Creates a Travis client for hosted versions of travis</p>
+</div><h4 id='method.repos' class="method"><span id='repos.v' class='invisible'><code>fn <a href='#method.repos' class='fnname'>repos</a>(&amp;self) -&gt; <a class="struct" href="../travis/repos/struct.Repos.html" title="struct travis::repos::Repos">Repos</a>&lt;C&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/travis/lib.rs.html#344-346' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>get a list of repos for the a given owner (user or org)</p>
+</div><h4 id='method.env' class="method"><span id='env.v' class='invisible'><code>fn <a href='#method.env' class='fnname'>env</a>&lt;'a, R&gt;(&amp;self, slug: R) -&gt; <a class="struct" href="../travis/env/struct.Env.html" title="struct travis::env::Env">Env</a>&lt;C&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;R: <a class="trait" href="https://doc.rust-lang.org/nightly/core/convert/trait.Into.html" title="trait core::convert::Into">Into</a>&lt;<a class="enum" href="https://doc.rust-lang.org/nightly/alloc/borrow/enum.Cow.html" title="enum alloc::borrow::Cow">Cow</a>&lt;'a, <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>&gt;&gt;,&nbsp;</span></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/travis/lib.rs.html#349-357' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>get a ref to an env for a given repo slug</p>
+</div><h4 id='method.builds' class="method"><span id='builds.v' class='invisible'><code>fn <a href='#method.builds' class='fnname'>builds</a>&lt;'a, R&gt;(&amp;self, slug: R) -&gt; <a class="struct" href="../travis/builds/struct.Builds.html" title="struct travis::builds::Builds">Builds</a>&lt;C&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;R: <a class="trait" href="https://doc.rust-lang.org/nightly/core/convert/trait.Into.html" title="trait core::convert::Into">Into</a>&lt;<a class="enum" href="https://doc.rust-lang.org/nightly/alloc/borrow/enum.Cow.html" title="enum alloc::borrow::Cow">Cow</a>&lt;'a, <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>&gt;&gt;,&nbsp;</span></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/travis/lib.rs.html#360-368' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>get a ref builds associated with a repo slug</p>
+</div><h4 id='method.jobs' class="method"><span id='jobs.v' class='invisible'><code>fn <a href='#method.jobs' class='fnname'>jobs</a>(&amp;self, build_id: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; <a class="struct" href="../travis/jobs/struct.Jobs.html" title="struct travis::jobs::Jobs">Jobs</a>&lt;C&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/travis/lib.rs.html#371-376' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>get a ref to jobs associated with a build</p>
+</div></div>
+            <h2 id='implementations' class='small-section-header'>
+              Trait Implementations<a href='#implementations' class='anchor'></a>
+            </h2>
+        <h3 id='impl-Clone' class='impl'><span class='in-band'><code>impl&lt;C:&nbsp;<a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a>&gt; <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../travis/struct.Client.html" title="struct travis::Client">Client</a>&lt;C&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;C: <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> + <a class="trait" href="https://docs.rs/hyper/0.11.6/hyper/client/connect/trait.Connect.html" title="trait hyper::client::connect::Connect">Connect</a>,&nbsp;</span></code><a href='#impl-Clone' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/travis/lib.rs.html#199' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.clone' class="method"><span id='clone.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class="struct" href="../travis/struct.Client.html" title="struct travis::Client">Client</a>&lt;C&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/travis/lib.rs.html#199' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Returns a copy of the value. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">Read more</a></p>
+</div><h4 id='method.clone_from' class="method"><span id='clone_from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>Self)</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/core/clone.rs.html#112-114' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Performs copy-assignment from <code>source</code>. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from">Read more</a></p>
+</div></div><h3 id='impl-Debug' class='impl'><span class='in-band'><code>impl&lt;C:&nbsp;<a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a>&gt; <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../travis/struct.Client.html" title="struct travis::Client">Client</a>&lt;C&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;C: <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> + <a class="trait" href="https://docs.rs/hyper/0.11.6/hyper/client/connect/trait.Connect.html" title="trait hyper::client::connect::Connect">Connect</a>,&nbsp;</span></code><a href='#impl-Debug' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/travis/lib.rs.html#199' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/travis/lib.rs.html#199' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Formats the value using the given formatter.</p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "travis";
+    </script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>
