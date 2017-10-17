@@ -95,6 +95,8 @@ const PRO_HOST: &str = "https://api.travis-ci.com";
 #[derive(Debug, Deserialize, Clone, PartialEq)]
 #[serde(rename_all = "lowercase")]
 pub enum State {
+    /// Workload was received and machine is booting
+    Received,
     /// Workload was created but not yet started
     Created,
     /// Workload was started but has not completed
@@ -115,6 +117,7 @@ impl fmt::Display for State {
             f,
             "{}",
             match *self {
+                State::Received => "received",
                 State::Created => "created",
                 State::Started => "started",
                 State::Canceled => "canceled",
