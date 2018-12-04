@@ -22,6 +22,10 @@ url = "1.5.1"
 error-chain = "0.10"
 derive_builder = "0.5"
 
+[dev-dependencies]
+env_logger = "0.5"
+openssl-probe = "0.1.2"
+
 [badges]
 travis-ci = { repository = "softprops/travis" }
 

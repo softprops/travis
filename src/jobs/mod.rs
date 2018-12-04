@@ -1,6 +1,7 @@
 //! interfaces for interacting with travis jobs
 
 use super::{Client, Error, Future, Owner, State};
+use super::commits::Commit;
 use futures::{Future as StdFuture, IntoFuture};
 use futures::future;
 use hyper::client::Connect;
@@ -21,7 +22,7 @@ pub struct Job {
     //pub build:
     pub queue: Option<String>,
     //pub repository
-    // pub commit
+    pub commit: Option<Commit>,
     pub owner: Option<Owner>,
     //pub stage
 }
