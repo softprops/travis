@@ -74,6 +74,7 @@ pub mod env;
 use env::Env;
 pub mod builds;
 use builds::Builds;
+pub mod commits;
 pub mod jobs;
 use jobs::Jobs;
 pub mod repos;

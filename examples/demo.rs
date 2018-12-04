@@ -1,4 +1,6 @@
+extern crate env_logger;
 extern crate futures;
+extern crate openssl_probe;
 extern crate tokio_core;
 extern crate travis;
 extern crate hyper;
@@ -9,7 +11,7 @@ use futures::{Future as StdFuture, Stream as StdStream, future};
 use futures::stream::futures_unordered;
 use hyper::client::Connect;
 use tokio_core::reactor::Core;
-use travis::{Client, Credential, Future, Result, State, builds, repos};
+use travis::{Client, Future, Result, State, builds, repos};
 
 fn jobs<C>(state: State, builds: builds::Builds<C>) -> Future<usize>
 where
@@ -36,43 +38,42 @@ where
 }
 
 fn run() -> Result<()> {
+    env_logger::init();
+    openssl_probe::init_ssl_cert_env_vars();
+
     let mut core = Core::new()?;
-    let travis = Client::pro(
-        // authentication credentials
-        env::var("GH_TOKEN").ok().map(
-            |token| Credential::Github(token),
-        ),
+    let travis = Client::oss(
+        None,
         // core for credential exchange ( if needed )
         &mut core,
     )?;
 
-    // all running and pending jobs
+    // all passed/failed jobs
     let work = travis
         .repos()
         .iter(
-            env::var("GH_OWNER").ok().unwrap_or("softprops".into()),
+            env::var("GH_OWNER").ok().unwrap_or("rocallahan".into()),
             &repos::ListOptions::builder()
                 .limit(100)
-                .active(true)
                 .build()?,
         )
         .map(|repo| {
-            let builds = travis.builds(repo.slug.as_ref());
-            let started = jobs(State::Started, builds.clone());
-            let created = jobs(State::Created, builds);
+            let builds = travis.builds(&repo.slug);
+            let passed = jobs(State::Passed, builds.clone());
+            let failed = jobs(State::Failed, builds);
             futures_unordered(vec![
-                started.and_then(
-                    move |s| created.map(move |c| (repo.slug, s, c))
+                passed.join(failed).and_then(
+                    move |(p, f)| future::ok((repo.slug, p, f))
                 ),
             ])
         })
         .flatten()
         .fold::<_, _, Future<(usize, usize)>>(
             (0, 0),
-            |(all_started, all_created), (slug, started, created)| {
-                println!("{} ({}, {})", slug, started, created);
+            |(all_passed, all_failed), (slug, passed, failed)| {
+                println!("{} ({}, {})", slug, passed, failed);
                 Box::new(
-                    future::ok((all_started + started, all_created + created)),
+                    future::ok((all_passed + passed, all_failed + failed)),
                 )
             },
         );
